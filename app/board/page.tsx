@@ -1,12 +1,17 @@
 'use client';
 
 import { useCallback } from 'react';
+import { useAuth } from '@clerk/nextjs';
+import Link from 'next/link';
 import { Canvas } from '@/components/board/Canvas';
 import { Toolbar } from '@/components/board/Toolbar';
 import { useBoardStore } from '@/lib/stores/boardStore';
 import { CARD_EMOJIS } from '@/lib/types';
 
 export default function BoardPage() {
+  const { isSignedIn } = useAuth();
+  const canEdit = !!isSignedIn;
+
   const addCard = useBoardStore((state) => state.addCard);
   const deleteSelectedCards = useBoardStore((state) => state.deleteSelectedCards);
   const selectedCards = useBoardStore((state) => state.selectedCards);
@@ -62,9 +67,19 @@ export default function BoardPage() {
         onToggleCloud={toggleCloud}
         hasSelection={selectedCards.length > 0}
         cloudEnabled={cloudEnabled}
+        canEdit={canEdit}
       />
-      
-      <Canvas />
+
+      {!canEdit && (
+        <Link
+          href="/secret-admin"
+          className="fixed bottom-4 right-4 z-[var(--z-fixed)] text-xs text-[var(--neutral-500)] hover:text-[var(--primary-600)] transition-colors"
+        >
+          Admin
+        </Link>
+      )}
+
+      <Canvas readOnly={!canEdit} />
     </div>
   );
 }

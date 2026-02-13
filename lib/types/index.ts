@@ -95,6 +95,7 @@ export interface ContentCardProps {
   data: ContentCard;
   selected: boolean;
   isChild?: boolean;
+  readOnly?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
 }
@@ -103,12 +104,14 @@ export interface FolderCardProps {
   data: FolderCard;
   selected: boolean;
   onToggleExpand: (id: string) => void;
+  readOnly?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
 }
 
 export interface CanvasProps {
-  boardId: string;
+  boardId?: string;
+  readOnly?: boolean; // true = só visualização (pan/zoom, expandir pasta)
 }
 
 export interface ToolbarProps {
@@ -119,6 +122,7 @@ export interface ToolbarProps {
   onToggleCloud: () => void;
   hasSelection: boolean;
   cloudEnabled: boolean;
+  canEdit?: boolean; // false = só visualização
 }
 
 // ============================================

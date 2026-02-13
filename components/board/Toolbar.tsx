@@ -14,6 +14,7 @@ export function Toolbar({
   onToggleCloud,
   hasSelection,
   cloudEnabled,
+  canEdit = false,
 }: ToolbarProps) {
   return (
     <motion.div 
@@ -23,53 +24,53 @@ export function Toolbar({
       transition={{ type: 'spring', stiffness: 300, damping: 30 }}
     >
       <div className="flex items-center gap-2 bg-[var(--neutral-50)] border-2 border-[var(--neutral-300)] rounded-2xl px-3 py-2 shadow-xl backdrop-blur-md">
-        {/* Criar Card */}
-        <Tooltip content="Criar Card (Double-click)">
-          <motion.button
-            onClick={onCreateCard}
-            className="p-2 rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Plus size={20} />
-          </motion.button>
-        </Tooltip>
+        {canEdit && (
+          <>
+            <Tooltip content="Criar Card">
+              <motion.button
+                onClick={onCreateCard}
+                className="p-2 rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Plus size={20} />
+              </motion.button>
+            </Tooltip>
 
-        {/* Criar Pasta */}
-        <Tooltip content="Criar Pasta">
-          <motion.button
-            onClick={onCreateFolder}
-            className="p-2 rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-          >
-            <Folder size={20} />
-          </motion.button>
-        </Tooltip>
+            <Tooltip content="Criar Pasta">
+              <motion.button
+                onClick={onCreateFolder}
+                className="p-2 rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <Folder size={20} />
+              </motion.button>
+            </Tooltip>
 
-        <div className="w-px h-6 bg-[var(--neutral-300)]" />
+            <div className="w-px h-6 bg-[var(--neutral-300)]" />
 
-        {/* Deletar Selecionados */}
-        <Tooltip content="Deletar Selecionados (Delete)">
-          <motion.button
-            onClick={onDeleteSelected}
-            disabled={!hasSelection}
-            className={cn(
-              'p-2 rounded-lg transition-colors',
-              hasSelection
-                ? 'hover:bg-[var(--accent-coral)] text-[var(--neutral-700)] hover:text-[var(--neutral-900)]'
-                : 'opacity-30 cursor-not-allowed text-[var(--neutral-400)]'
-            )}
-            whileHover={hasSelection ? { scale: 1.1 } : {}}
-            whileTap={hasSelection ? { scale: 0.9 } : {}}
-          >
-            <Trash2 size={20} />
-          </motion.button>
-        </Tooltip>
+            <Tooltip content="Deletar Selecionados (Delete)">
+              <motion.button
+                onClick={onDeleteSelected}
+                disabled={!hasSelection}
+                className={cn(
+                  'p-2 rounded-lg transition-colors',
+                  hasSelection
+                    ? 'hover:bg-[var(--accent-coral)] text-[var(--neutral-700)] hover:text-[var(--neutral-900)]'
+                    : 'opacity-30 cursor-not-allowed text-[var(--neutral-400)]'
+                )}
+                whileHover={hasSelection ? { scale: 1.1 } : {}}
+                whileTap={hasSelection ? { scale: 0.9 } : {}}
+              >
+                <Trash2 size={20} />
+              </motion.button>
+            </Tooltip>
 
-        <div className="w-px h-6 bg-[var(--neutral-300)]" />
+            <div className="w-px h-6 bg-[var(--neutral-300)]" />
+          </>
+        )}
 
-        {/* Resetar View */}
         <Tooltip content="Resetar Visualização">
           <motion.button
             onClick={onResetView}
@@ -81,7 +82,6 @@ export function Toolbar({
           </motion.button>
         </Tooltip>
 
-        {/* Toggle Cloud Layout */}
         <Tooltip content={cloudEnabled ? 'Desativar Nuvem' : 'Ativar Nuvem'}>
           <motion.button
             onClick={onToggleCloud}

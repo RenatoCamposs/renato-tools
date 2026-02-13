@@ -7,9 +7,8 @@ import type { FolderCardProps } from '@/lib/types';
 import { useBoardStore, useFolderChildren } from '@/lib/stores/boardStore';
 import { ContentCard } from './ContentCard';
 
-export function FolderCard({ data, selected, onToggleExpand }: FolderCardProps) {
+export function FolderCard({ data, selected, onToggleExpand, readOnly = false }: FolderCardProps) {
   const deleteCard = useBoardStore((state) => state.deleteCard);
-  const selectCard = useBoardStore((state) => state.selectCard);
   const childCards = useFolderChildren(data.id);
 
   const handleClick = (e: React.MouseEvent) => {
@@ -131,15 +130,17 @@ export function FolderCard({ data, selected, onToggleExpand }: FolderCardProps) 
           {data.children.length}
         </div>
 
-        {/* Botão Delete */}
-        <motion.button
-          className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[var(--accent-coral)] flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity z-10"
-          onClick={handleDelete}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-        >
-          <Trash2 size={12} className="text-[var(--neutral-900)]" />
-        </motion.button>
+        {/* Botão Delete - só quando autenticado */}
+        {!readOnly && (
+          <motion.button
+            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[var(--accent-coral)] flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity z-10"
+            onClick={handleDelete}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Trash2 size={12} className="text-[var(--neutral-900)]" />
+          </motion.button>
+        )}
 
         {/* Indicador expandido */}
         {data.isExpanded && (

@@ -23,7 +23,7 @@ import type { Card, ContentCard as ContentCardType, FolderCard as FolderCardType
 
 // Custom Node Wrappers para React Flow
 function ContentCardNode({ data }: { data: any }) {
-  return <ContentCard data={data.card} selected={data.selected} />;
+  return <ContentCard data={data.card} selected={data.selected} readOnly={data.readOnly} />;
 }
 
 function FolderCardNode({ data }: { data: any }) {
@@ -32,6 +32,7 @@ function FolderCardNode({ data }: { data: any }) {
       data={data.card} 
       selected={data.selected}
       onToggleExpand={data.onToggleExpand}
+      readOnly={data.readOnly}
     />
   );
 }
@@ -41,11 +42,10 @@ const nodeTypes: NodeTypes = {
   folder: FolderCardNode,
 };
 
-export function Canvas() {
+export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
   const cards = useBoardStore((state) => state.cards);
   const selectedCards = useBoardStore((state) => state.selectedCards);
   const updateCard = useBoardStore((state) => state.updateCard);
-  const addCard = useBoardStore((state) => state.addCard);
   const toggleFolder = useBoardStore((state) => state.toggleFolder);
   const clearSelection = useBoardStore((state) => state.clearSelection);
   
@@ -64,12 +64,13 @@ export function Canvas() {
         card,
         selected: selectedCards.includes(card.id),
         onToggleExpand: toggleFolder,
+        readOnly,
       },
-      draggable: true,
+      draggable: !readOnly,
     }));
 
     setNodes(flowNodes);
-  }, [cards, selectedCards, setNodes, toggleFolder]);
+  }, [cards, selectedCards, setNodes, toggleFolder, readOnly]);
 
   // Criar edges (conexões) baseado nos links
   useEffect(() => {
@@ -96,12 +97,12 @@ export function Canvas() {
     setEdges(flowEdges);
   }, [cards, setEdges]);
 
-  // Atualizar posição do card quando arrastado
+  // Atualizar posição do card quando arrastado (só se não for readOnly)
   const onNodeDragStop = useCallback(
     (_event: any, node: Node) => {
-      updateCard(node.id, { position: node.position });
+      if (!readOnly) updateCard(node.id, { position: node.position });
     },
-    [updateCard]
+    [updateCard, readOnly]
   );
 
   // Criar novo card ao double-click no canvas
@@ -113,9 +114,10 @@ export function Canvas() {
     [clearSelection]
   );
 
-  // Criar conexão entre cards
+  // Criar conexão entre cards (só se não for readOnly)
   const onConnect = useCallback(
     (connection: Connection) => {
+      if (readOnly) return;
       const sourceCard = cards.find(c => c.id === connection.source);
       if (sourceCard && sourceCard.type === 'content') {
         const contentCard = sourceCard as ContentCardType;
@@ -130,7 +132,7 @@ export function Canvas() {
       
       setEdges((eds) => addEdge(connection, eds));
     },
-    [cards, updateCard, setEdges]
+    [cards, updateCard, setEdges, readOnly]
   );
 
 
@@ -142,7 +144,7 @@ export function Canvas() {
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}
         onNodeDragStop={onNodeDragStop}
-        onConnect={onConnect}
+        onConnect={readOnly ? undefined : onConnect}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         fitView
@@ -150,6 +152,8 @@ export function Canvas() {
         maxZoom={3}
         defaultViewport={{ x: 0, y: 0, zoom: 1 }}
         proOptions={{ hideAttribution: true }}
+        nodesConnectable={!readOnly}
+        elementsSelectable={!readOnly}
       >
         <Background 
           color="var(--canvas-grid-color)" 
