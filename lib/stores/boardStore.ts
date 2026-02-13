@@ -25,7 +25,7 @@ export const useBoardStore = create<BoardState>()(
       // ============================================
       
       addCard: (cardData) => {
-        const newCard: Card = {
+        const baseCard = {
           id: crypto.randomUUID(),
           type: cardData.type || 'content',
           position: cardData.position || { 
@@ -39,15 +39,22 @@ export const useBoardStore = create<BoardState>()(
           parentId: cardData.parentId,
           createdAt: new Date(),
           updatedAt: new Date(),
-          ...(cardData.type === 'folder' ? {
-            children: [],
-            isExpanded: false,
-            layoutStyle: 'circle' as const,
-          } : {
-            tags: cardData.tags || [],
-            links: cardData.links || [],
-          }),
-        } as Card;
+        };
+
+        const newCard: Card = cardData.type === 'folder' 
+          ? {
+              ...baseCard,
+              type: 'folder' as const,
+              children: [],
+              isExpanded: false,
+              layoutStyle: 'circle' as const,
+            } as FolderCard
+          : {
+              ...baseCard,
+              type: 'content' as const,
+              tags: (cardData as Partial<ContentCard>).tags || [],
+              links: (cardData as Partial<ContentCard>).links || [],
+            } as ContentCard;
 
         set((state) => ({ cards: [...state.cards, newCard] }));
         return newCard.id;
@@ -57,7 +64,7 @@ export const useBoardStore = create<BoardState>()(
         set((state) => ({
           cards: state.cards.map((card) =>
             card.id === id
-              ? { ...card, ...updates, updatedAt: new Date() }
+              ? { ...card, ...updates, updatedAt: new Date() } as Card
               : card
           ),
         }));

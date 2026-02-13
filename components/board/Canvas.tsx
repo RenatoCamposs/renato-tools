@@ -13,6 +13,7 @@ import {
   type Edge,
   type Connection,
   type NodeTypes,
+  BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useBoardStore } from '@/lib/stores/boardStore';
@@ -48,8 +49,8 @@ export function Canvas() {
   const toggleFolder = useBoardStore((state) => state.toggleFolder);
   const clearSelection = useBoardStore((state) => state.clearSelection);
   
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
   // Converter cards para nodes do React Flow
   useEffect(() => {
@@ -104,21 +105,12 @@ export function Canvas() {
   );
 
   // Criar novo card ao double-click no canvas
-  const onPaneDoubleClick = useCallback(
+  const handlePaneClick = useCallback(
     (event: React.MouseEvent) => {
-      const bounds = (event.target as HTMLElement).getBoundingClientRect();
-      const x = event.clientX - bounds.left - bounds.width / 2;
-      const y = event.clientY - bounds.top - bounds.height / 2;
-
-      addCard({
-        type: 'content',
-        position: { x, y },
-        title: 'Novo Card',
-        description: 'Clique para editar',
-        image: '📝',
-      });
+      // Detectar double-click manualmente se necessário
+      clearSelection();
     },
-    [addCard]
+    [clearSelection]
   );
 
   // Criar conexão entre cards
@@ -141,10 +133,6 @@ export function Canvas() {
     [cards, updateCard, setEdges]
   );
 
-  // Limpar seleção ao clicar no background
-  const onPaneClick = useCallback(() => {
-    clearSelection();
-  }, [clearSelection]);
 
   return (
     <div className="w-full h-screen">
@@ -155,8 +143,7 @@ export function Canvas() {
         onEdgesChange={onEdgesChange}
         onNodeDragStop={onNodeDragStop}
         onConnect={onConnect}
-        onPaneClick={onPaneClick}
-        onPaneDoubleClick={onPaneDoubleClick}
+        onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
         fitView
         minZoom={0.1}
@@ -167,8 +154,7 @@ export function Canvas() {
         <Background 
           color="var(--canvas-grid-color)" 
           gap={20}
-          variant="dots"
-          size={1}
+          variant={BackgroundVariant.Dots}
         />
         
         <Controls 
