@@ -1,0 +1,264 @@
+/**
+ * Design Tokens - Infinite Board App
+ * Cores amareladas pastel para light mode
+ */
+
+:root {
+  /* ========================================
+     CORES - AMARELO PASTEL
+     ======================================== */
+  
+  /* Amarelos Primários */
+  --primary-50: #FFFEF5;
+  --primary-100: #FFFAEB;
+  --primary-200: #FFF4D1;
+  --primary-300: #FFEDB8;
+  --primary-400: #FFE49E;
+  --primary-500: #FFD978;  /* Cor principal */
+  --primary-600: #F5C452;
+  --primary-700: #E6AE3A;
+  --primary-800: #CC9530;
+  --primary-900: #A87828;
+  
+  /* Neutros Quentes */
+  --neutral-50: #FDFCF9;
+  --neutral-100: #F7F5F0;
+  --neutral-200: #EBE8DF;
+  --neutral-300: #D6D1C4;
+  --neutral-400: #B8B0A0;
+  --neutral-500: #8C8474;
+  --neutral-600: #6B6355;
+  --neutral-700: #4A4239;
+  --neutral-800: #2E2822;
+  --neutral-900: #1A1510;
+  
+  /* Acentos Pastel */
+  --accent-peach: #FFE8D1;
+  --accent-cream: #FFF9ED;
+  --accent-honey: #FFEBBA;
+  --accent-coral: #FFD4BD;
+  
+  /* Cores Funcionais */
+  --color-success: #D4E8B8;
+  --color-error: #FFD4BD;
+  --color-warning: #FFEBBA;
+  --color-info: #D1E8FF;
+  
+  /* ========================================
+     SOMBRAS & EFEITOS
+     ======================================== */
+  
+  --shadow-sm: 0 1px 2px rgba(168, 120, 40, 0.05);
+  --shadow-md: 0 4px 6px rgba(168, 120, 40, 0.08);
+  --shadow-lg: 0 10px 20px rgba(168, 120, 40, 0.12);
+  --shadow-xl: 0 20px 40px rgba(168, 120, 40, 0.15);
+  --shadow-2xl: 0 25px 50px rgba(168, 120, 40, 0.20);
+  
+  --glow-primary: 0 0 20px rgba(255, 217, 120, 0.4);
+  --glow-hover: 0 0 30px rgba(255, 217, 120, 0.6);
+  --glow-strong: 0 0 40px rgba(255, 217, 120, 0.8);
+  
+  /* ========================================
+     TIPOGRAFIA
+     ======================================== */
+  
+  /* Fontes */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+  
+  /* Tamanhos */
+  --text-xs: 0.75rem;      /* 12px */
+  --text-sm: 0.875rem;     /* 14px */
+  --text-base: 1rem;       /* 16px */
+  --text-lg: 1.125rem;     /* 18px */
+  --text-xl: 1.25rem;      /* 20px */
+  --text-2xl: 1.5rem;      /* 24px */
+  --text-3xl: 1.875rem;    /* 30px */
+  --text-4xl: 2.25rem;     /* 36px */
+  --text-5xl: 3rem;        /* 48px */
+  
+  /* Pesos */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+  --font-black: 900;
+  
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.25;
+  --leading-snug: 1.375;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.75;
+  --leading-loose: 2;
+  
+  /* ========================================
+     ESPAÇAMENTO
+     ======================================== */
+  
+  --spacing-px: 1px;
+  --spacing-0: 0;
+  --spacing-1: 0.25rem;    /* 4px */
+  --spacing-2: 0.5rem;     /* 8px */
+  --spacing-3: 0.75rem;    /* 12px */
+  --spacing-4: 1rem;       /* 16px */
+  --spacing-5: 1.25rem;    /* 20px */
+  --spacing-6: 1.5rem;     /* 24px */
+  --spacing-7: 1.75rem;    /* 28px */
+  --spacing-8: 2rem;       /* 32px */
+  --spacing-9: 2.25rem;    /* 36px */
+  --spacing-10: 2.5rem;    /* 40px */
+  --spacing-11: 2.75rem;   /* 44px */
+  --spacing-12: 3rem;      /* 48px */
+  --spacing-14: 3.5rem;    /* 56px */
+  --spacing-16: 4rem;      /* 64px */
+  --spacing-20: 5rem;      /* 80px */
+  --spacing-24: 6rem;      /* 96px */
+  
+  /* ========================================
+     BORDAS & RAIOS
+     ======================================== */
+  
+  --radius-none: 0;
+  --radius-sm: 0.375rem;   /* 6px */
+  --radius-md: 0.5rem;     /* 8px */
+  --radius-lg: 0.75rem;    /* 12px */
+  --radius-xl: 1rem;       /* 16px */
+  --radius-2xl: 1.5rem;    /* 24px */
+  --radius-3xl: 2rem;      /* 32px */
+  --radius-full: 9999px;
+  
+  --border-width: 1px;
+  --border-width-2: 2px;
+  --border-width-4: 4px;
+  --border-width-8: 8px;
+  
+  /* ========================================
+     TRANSIÇÕES & ANIMAÇÕES
+     ======================================== */
+  
+  /* Durações */
+  --transition-faster: 100ms;
+  --transition-fast: 150ms;
+  --transition-base: 200ms;
+  --transition-slow: 300ms;
+  --transition-slower: 500ms;
+  --transition-slowest: 700ms;
+  
+  /* Easing Functions */
+  --ease-linear: linear;
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-elastic: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  /* ========================================
+     Z-INDEX
+     ======================================== */
+  
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 400;
+  --z-modal: 500;
+  --z-popover: 600;
+  --z-tooltip: 700;
+  --z-notification: 800;
+  --z-max: 9999;
+  
+  /* ========================================
+     CANVAS ESPECÍFICO
+     ======================================== */
+  
+  --canvas-background: var(--neutral-50);
+  --canvas-grid-color: var(--neutral-300);
+  --canvas-grid-size: 20px;
+  
+  /* Card Colors */
+  --card-cream: var(--primary-100);
+  --card-yellow: var(--primary-200);
+  --card-honey: var(--accent-honey);
+  --card-peach: var(--accent-peach);
+  --card-mint: #E8F5E9;
+  --card-lavender: #F3E5F5;
+  --card-sky: #E3F2FD;
+  
+  /* Connection Lines */
+  --connection-default: var(--primary-300);
+  --connection-hover: var(--primary-500);
+  --connection-selected: var(--primary-700);
+}
+
+/* ========================================
+   CLASSES UTILITÁRIAS
+   ======================================== */
+
+.text-balance {
+  text-wrap: balance;
+}
+
+.text-pretty {
+  text-wrap: pretty;
+}
+
+/* Glass Morphism */
+.glass {
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  background: rgba(247, 245, 240, 0.8);
+}
+
+.glass-strong {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: rgba(247, 245, 240, 0.9);
+}
+
+/* Scroll Customizado */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: var(--neutral-100);
+  border-radius: var(--radius-full);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--neutral-400);
+  border-radius: var(--radius-full);
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-500);
+}
+
+/* Hide Scrollbar */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* GPU Acceleration */
+.gpu-accelerated {
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+/* Smooth Transitions */
+.smooth-transition {
+  transition: all var(--transition-base) var(--ease-in-out);
+}
+
+/* Focus Visible */
+.focus-ring:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+}

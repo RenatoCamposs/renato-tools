@@ -1,26 +1,124 @@
 @import "tailwindcss";
+@import "../styles/design-tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--canvas-background);
+  color: var(--neutral-800);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  overflow: hidden; /* Prevent scroll on board page */
+}
+
+/* Selection Styling */
+::selection {
+  background: var(--primary-300);
+  color: var(--neutral-900);
+}
+
+::-moz-selection {
+  background: var(--primary-300);
+  color: var(--neutral-900);
+}
+
+/* Focus Visible */
+*:focus-visible {
+  outline: 2px solid var(--primary-500);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Disable outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Links */
+a {
+  color: var(--primary-700);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--primary-800);
+}
+
+/* Buttons */
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Inputs */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+/* React Flow Customization */
+.react-flow {
+  background: var(--canvas-background);
+}
+
+.react-flow__background {
+  background-color: var(--canvas-background);
+}
+
+.react-flow__minimap {
+  background: var(--neutral-100);
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-lg);
+}
+
+.react-flow__controls {
+  background: var(--neutral-100);
+  border: 1px solid var(--neutral-300);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.react-flow__controls-button {
+  background: var(--neutral-50);
+  border-bottom: 1px solid var(--neutral-200);
+  color: var(--neutral-700);
+  transition: all var(--transition-base);
+}
+
+.react-flow__controls-button:hover {
+  background: var(--primary-100);
+  color: var(--primary-800);
+}
+
+.react-flow__edge-path {
+  stroke: var(--connection-default);
+  stroke-width: 2;
+}
+
+.react-flow__edge.selected .react-flow__edge-path {
+  stroke: var(--connection-selected);
+}
+
+.react-flow__edge:hover .react-flow__edge-path {
+  stroke: var(--connection-hover);
 }

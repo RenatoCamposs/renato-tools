@@ -1,65 +1,127 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { motion } from 'framer-motion';
+import { ArrowRight, Sparkles, Folder, Cloud, Zap } from 'lucide-react';
+import { Button } from '@/components/design-system/Button';
+import { useRouter } from 'next/navigation';
+
+export default function LandingPage() {
+  const router = useRouter();
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="min-h-screen bg-gradient-to-br from-[var(--primary-50)] via-[var(--neutral-50)] to-[var(--accent-cream)] flex flex-col">
+      {/* Header */}
+      <header className="p-6 flex justify-between items-center">
+        <motion.div
+          className="text-2xl font-bold text-[var(--primary-800)]"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          ✨ Infinite Board
+        </motion.div>
+        
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+        >
+          <Button 
+            variant="ghost" 
+            onClick={() => router.push('/sign-in')}
+          >
+            Entrar
+          </Button>
+        </motion.div>
+      </header>
+
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center px-6 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <div className="inline-block mb-4 px-4 py-2 bg-[var(--primary-200)] rounded-full text-sm font-medium text-[var(--primary-800)]">
+            <Sparkles className="inline mr-2" size={16} />
+            Organize suas ideias visualmente
+          </div>
+          
+          <h1 className="text-6xl font-bold text-[var(--neutral-900)] mb-6 max-w-4xl">
+            Seu espaço infinito de{' '}
+            <span className="text-[var(--primary-700)]">criatividade</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          
+          <p className="text-xl text-[var(--neutral-600)] mb-8 max-w-2xl mx-auto">
+            Board infinito estilo Miro com efeito de nuvem do Obsidian. 
+            Cards, pastas, conexões e animações suaves para organizar tudo.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+          <div className="flex gap-4 justify-center">
+            <Button 
+              size="lg" 
+              onClick={() => router.push('/sign-up')}
+              rightIcon={<ArrowRight />}
+            >
+              Começar Grátis
+            </Button>
+            <Button 
+              size="lg" 
+              variant="secondary"
+              onClick={() => router.push('/board')}
+            >
+              Ver Demo
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Features */}
+        <motion.div
+          className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <div className="p-6 bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-[var(--neutral-200)] hover:border-[var(--primary-400)] transition-colors">
+            <div className="w-12 h-12 bg-[var(--primary-200)] rounded-xl flex items-center justify-center mb-4">
+              <Cloud className="text-[var(--primary-700)]" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-[var(--neutral-800)] mb-2">
+              Efeito Nuvem
+            </h3>
+            <p className="text-[var(--neutral-600)] text-sm">
+              Cards flutuam e se organizam automaticamente como no Obsidian Graph View
+            </p>
+          </div>
+
+          <div className="p-6 bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-[var(--neutral-200)] hover:border-[var(--primary-400)] transition-colors">
+            <div className="w-12 h-12 bg-[var(--accent-peach)] rounded-xl flex items-center justify-center mb-4">
+              <Folder className="text-[var(--primary-700)]" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-[var(--neutral-800)] mb-2">
+              Pastas Explosivas
+            </h3>
+            <p className="text-[var(--neutral-600)] text-sm">
+              Pastas que expandem mostrando cards filhos com animação burst
+            </p>
+          </div>
+
+          <div className="p-6 bg-white/80 backdrop-blur-sm rounded-2xl border-2 border-[var(--neutral-200)] hover:border-[var(--primary-400)] transition-colors">
+            <div className="w-12 h-12 bg-[var(--accent-honey)] rounded-xl flex items-center justify-center mb-4">
+              <Zap className="text-[var(--primary-700)]" size={24} />
+            </div>
+            <h3 className="text-lg font-bold text-[var(--neutral-800)] mb-2">
+              Animações Snappy
+            </h3>
+            <p className="text-[var(--neutral-600)] text-sm">
+              Hover effects, glow, e transições suaves em todos os elementos
+            </p>
+          </div>
+        </motion.div>
       </main>
+
+      {/* Footer */}
+      <footer className="p-6 text-center text-sm text-[var(--neutral-500)]">
+        <p>Feito com 💛 por Renato • 2026</p>
+      </footer>
     </div>
   );
 }
