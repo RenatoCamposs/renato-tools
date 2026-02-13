@@ -26,9 +26,9 @@ export default function LandingPage() {
         >
           <Button 
             variant="ghost" 
-            onClick={() => router.push('/sign-in')}
+            onClick={() => router.push('/board')}
           >
-            Entrar
+            Abrir Board
           </Button>
         </motion.div>
       </header>
@@ -58,17 +58,10 @@ export default function LandingPage() {
           <div className="flex gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => router.push('/sign-up')}
+              onClick={() => router.push('/board')}
               rightIcon={<ArrowRight />}
             >
-              Começar Grátis
-            </Button>
-            <Button 
-              size="lg" 
-              variant="secondary"
-              onClick={() => router.push('/board')}
-            >
-              Ver Demo
+              Abrir Board
             </Button>
           </div>
         </motion.div>
