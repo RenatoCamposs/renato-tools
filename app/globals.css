@@ -76,13 +76,13 @@ select {
   line-height: inherit;
 }
 
-/* React Flow Customization */
+/* React Flow - FigJam-style */
 .react-flow {
-  background: var(--canvas-background);
+  background: var(--figjam-bg);
 }
 
 .react-flow__background {
-  background-color: var(--canvas-background);
+  background-color: var(--figjam-bg);
 }
 
 .react-flow__minimap {

@@ -175,6 +175,10 @@
   --canvas-background: var(--neutral-50);
   --canvas-grid-color: var(--neutral-300);
   --canvas-grid-size: 20px;
+
+  /* FigJam-style background */
+  --figjam-bg: #fafaf9;
+  --figjam-dot-color: #e5e5e0;
   
   /* Card Colors */
   --card-cream: var(--primary-100);

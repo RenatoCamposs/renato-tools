@@ -3,7 +3,6 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import {
   ReactFlow,
-  Background,
   Controls,
   MiniMap,
   useNodesState,
@@ -13,12 +12,12 @@ import {
   type Edge,
   type Connection,
   type NodeTypes,
-  BackgroundVariant,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useBoardStore } from '@/lib/stores/boardStore';
 import { ContentCard } from './ContentCard';
 import { FolderCard } from './FolderCard';
+import { FigJamBackground } from './FigJamBackground';
 import type { Card, ContentCard as ContentCardType, FolderCard as FolderCardType } from '@/lib/types';
 
 // Custom Node Wrappers para React Flow
@@ -155,11 +154,7 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
         nodesConnectable={!readOnly}
         elementsSelectable={!readOnly}
       >
-        <Background 
-          color="var(--canvas-grid-color)" 
-          gap={20}
-          variant={BackgroundVariant.Dots}
-        />
+        <FigJamBackground />
         
         <Controls 
           showZoom
