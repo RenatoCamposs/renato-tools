@@ -1,8 +1,8 @@
 {
-  "name": "infinite-board-app",
+  "name": "renato-tools",
   "version": "0.1.0",
   "private": true,
-  "description": "Um board infinito estilo Miro com efeito de nuvem do Obsidian",
+  "description": "Renato Tools - Board infinito estilo Miro com efeito de nuvem do Obsidian",
   "author": "Renato",
   "scripts": {
     "dev": "next dev --turbopack",

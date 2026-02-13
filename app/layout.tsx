@@ -9,9 +9,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Infinite Board - Your Visual Workspace",
-  description: "Um board infinito estilo Miro com efeito de nuvem do Obsidian. Organize suas ideias visualmente com cards e pastas interativas.",
-  keywords: ["board", "miro", "obsidian", "visual", "workspace", "cards", "organização"],
+  title: "Renato Tools - Your Visual Workspace",
+  description: "Board infinito estilo Miro com efeito de nuvem do Obsidian. Organize suas ideias visualmente com cards e pastas interativas.",
+  keywords: ["board", "miro", "obsidian", "visual", "workspace", "cards", "organização", "renato", "tools"],
 };
 
 export default function RootLayout({
