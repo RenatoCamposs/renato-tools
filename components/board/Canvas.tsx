@@ -1,10 +1,11 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   ReactFlow,
   Controls,
   MiniMap,
+  BezierEdge,
   useNodesState,
   useEdgesState,
   addEdge,
@@ -12,13 +13,17 @@ import {
   type Edge,
   type Connection,
   type NodeTypes,
+  type EdgeTypes,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { useBoardStore } from '@/lib/stores/boardStore';
 import { ContentCard } from './ContentCard';
 import { FolderCard } from './FolderCard';
+import { HubNode, HUB_NODE_SIZE } from './HubNode';
 import { FigJamBackground } from './FigJamBackground';
 import type { Card, ContentCard as ContentCardType, FolderCard as FolderCardType } from '@/lib/types';
+
+export const HUB_NODE_ID = '__hub_tools__';
 
 // Custom Node Wrappers para React Flow
 function ContentCardNode({ data }: { data: any }) {
@@ -36,10 +41,29 @@ function FolderCardNode({ data }: { data: any }) {
   );
 }
 
+function HubNodeWrapper() {
+  return <HubNode />;
+}
+
 const nodeTypes: NodeTypes = {
   content: ContentCardNode,
   folder: FolderCardNode,
+  hub: HubNodeWrapper,
 };
+
+const edgeTypes: EdgeTypes = {
+  obsidian: BezierEdge,
+};
+
+export const ORBIT_RADIUS = 280;
+
+export function getOrbitalPosition(index: number, total: number) {
+  const angle = total <= 0 ? 0 : (index / total) * 2 * Math.PI;
+  return {
+    x: ORBIT_RADIUS * Math.cos(angle),
+    y: ORBIT_RADIUS * Math.sin(angle),
+  };
+}
 
 export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
   const cards = useBoardStore((state) => state.cards);
@@ -47,15 +71,37 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
   const updateCard = useBoardStore((state) => state.updateCard);
   const toggleFolder = useBoardStore((state) => state.toggleFolder);
   const clearSelection = useBoardStore((state) => state.clearSelection);
-  
+  const hasOrbitLaidOut = useRef(false);
+
   const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
 
-  // Converter cards para nodes do React Flow
+  // Nó central (hub) + cards em órbita ao redor do brain
   useEffect(() => {
     const topLevelCards = cards.filter(card => !card.parentId);
-    
-    const flowNodes: Node[] = topLevelCards.map(card => ({
+    const half = HUB_NODE_SIZE / 2;
+
+    if (topLevelCards.length > 0 && !hasOrbitLaidOut.current) {
+      topLevelCards.forEach((card, index) => {
+        const pos = getOrbitalPosition(index, topLevelCards.length);
+        updateCard(card.id, { position: pos });
+      });
+      hasOrbitLaidOut.current = true;
+    }
+
+    const hubNode: Node = {
+      id: HUB_NODE_ID,
+      type: 'hub',
+      position: { x: -half, y: -half },
+      data: {},
+      draggable: false,
+      selectable: false,
+      width: HUB_NODE_SIZE,
+      height: HUB_NODE_SIZE,
+      zIndex: 0,
+    };
+
+    const cardNodes: Node[] = topLevelCards.map(card => ({
       id: card.id,
       type: card.type,
       position: card.position,
@@ -66,15 +112,30 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
         readOnly,
       },
       draggable: !readOnly,
+      zIndex: 1,
     }));
 
-    setNodes(flowNodes);
-  }, [cards, selectedCards, setNodes, toggleFolder, readOnly]);
+    setNodes([hubNode, ...cardNodes]);
+  }, [cards, selectedCards, setNodes, toggleFolder, readOnly, updateCard]);
 
-  // Criar edges (conexões) baseado nos links
+  // Edges: hub -> todos os cards (estilo Obsidian) + links entre cards
   useEffect(() => {
+    const topLevelCards = cards.filter(card => !card.parentId);
     const flowEdges: Edge[] = [];
-    
+
+    // Linhas do hub central para cada card (Bezier; animação via CSS .obsidian-graph-edge)
+    topLevelCards.forEach(card => {
+      flowEdges.push({
+        id: `${HUB_NODE_ID}-${card.id}`,
+        source: HUB_NODE_ID,
+        target: card.id,
+        type: 'obsidian',
+        className: 'obsidian-graph-edge',
+        style: { stroke: '#D4C49E', strokeWidth: 2 },
+      });
+    });
+
+    // Links entre cards (conexões manuais)
     cards.forEach(card => {
       if (card.type === 'content') {
         const contentCard = card as ContentCardType;
@@ -96,10 +157,11 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
     setEdges(flowEdges);
   }, [cards, setEdges]);
 
-  // Atualizar posição do card quando arrastado (só se não for readOnly)
+  // Atualizar posição do card quando arrastado (hub não é arrastável)
   const onNodeDragStop = useCallback(
     (_event: any, node: Node) => {
-      if (!readOnly) updateCard(node.id, { position: node.position });
+      if (readOnly || node.id === HUB_NODE_ID) return;
+      updateCard(node.id, { position: node.position });
     },
     [updateCard, readOnly]
   );
@@ -146,6 +208,7 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
         onConnect={readOnly ? undefined : onConnect}
         onPaneClick={handlePaneClick}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
         fitView
         minZoom={0.1}
         maxZoom={3}
@@ -165,7 +228,8 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
         
         <MiniMap 
           nodeColor={(node) => {
-            if (selectedCards.includes(node.id)) return 'var(--primary-500)';
+            if (node.id === HUB_NODE_ID) return 'var(--primary-500)';
+            if (selectedCards.includes(node.id)) return 'var(--primary-600)';
             return 'var(--neutral-300)';
           }}
           nodeBorderRadius={8}
@@ -174,8 +238,9 @@ export function Canvas({ readOnly = false }: { readOnly?: boolean }) {
           position="bottom-left"
           style={{
             background: 'var(--neutral-100)',
-            border: '1px solid var(--neutral-300)',
+            border: 'none',
             borderRadius: 'var(--radius-lg)',
+            boxShadow: 'inset 0 0 0 1px var(--neutral-400), var(--shadow-md)',
           }}
         />
       </ReactFlow>

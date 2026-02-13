@@ -85,6 +85,8 @@ export interface BoardState {
   toggleFolder: (id: string) => void;
   addCardToFolder: (cardId: string, folderId: string) => void;
   removeCardFromFolder: (cardId: string, folderId: string) => void;
+  /** Carrega estado global (API) — exibido para todos */
+  hydrate: (payload: { cards: Card[]; viewport: Viewport; cloudEnabled: boolean }) => void;
 }
 
 // ============================================
@@ -120,9 +122,10 @@ export interface ToolbarProps {
   onDeleteSelected: () => void;
   onResetView: () => void;
   onToggleCloud: () => void;
+  onSave?: () => void | Promise<void>; // Salvar estado global (visível para todos)
   hasSelection: boolean;
   cloudEnabled: boolean;
-  canEdit?: boolean; // false = só visualização
+  canEdit?: boolean;
 }
 
 // ============================================
@@ -143,7 +146,7 @@ export type CardColor = keyof typeof CARD_COLORS;
 
 export const CARD_EMOJIS = [
   '📝', '💡', '🎯', '🚀', '⭐', '🔥', '💎', '🎨',
-  '📚', '🔨', '🎯', '🌟', '🎉', '💪', '🎮', '🎬',
+  '📚', '🔨', '🌟', '🎉', '💪', '🎮', '🎬',
   '📱', '💻', '🖥️', '⌚', '📷', '🎧', '🎵', '🎸',
   '🏆', '🎓', '📊', '📈', '💰', '🏠', '🌍', '✈️',
 ] as const;

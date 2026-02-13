@@ -14,9 +14,12 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   ({ className, label, error, hint, leftIcon, rightIcon, ...props }, ref) => {
     return (
-      <div className="w-full">
+      <div className="w-full" style={{ marginBottom: 0 }}>
         {label && (
-          <label className="block text-sm font-medium text-[var(--neutral-700)] mb-2">
+          <label
+            className="block text-sm font-medium text-[var(--neutral-700)]"
+            style={{ marginBottom: 'var(--spacing-3)' }}
+          >
             {label}
           </label>
         )}
@@ -31,8 +34,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           <input
             ref={ref}
             className={cn(
-              'w-full bg-[var(--neutral-50)] border-2 border-[var(--neutral-300)]',
-              'rounded-lg px-4 py-3 text-[var(--neutral-800)]',
+              'w-full bg-[var(--neutral-50)] border-2 border-[var(--neutral-300)] rounded-lg text-[var(--neutral-800)]',
               'placeholder:text-[var(--neutral-400)]',
               'transition-all duration-200',
               'focus:outline-none focus:border-[var(--primary-500)] focus:ring-2 focus:ring-[var(--primary-200)]',
@@ -41,6 +43,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
               rightIcon && 'pr-10',
               className
             )}
+            style={{ padding: 'var(--spacing-3) var(--spacing-4)' }}
             aria-invalid={!!error}
             {...props}
           />
@@ -53,11 +56,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         </div>
         
         {error && (
-          <p className="mt-1 text-sm text-[var(--accent-coral)]">{error}</p>
+          <p className="text-sm text-[var(--accent-coral)]" style={{ marginTop: 'var(--spacing-2)' }}>{error}</p>
         )}
         
         {hint && !error && (
-          <p className="mt-1 text-sm text-[var(--neutral-500)]">{hint}</p>
+          <p className="text-sm text-[var(--neutral-500)]" style={{ marginTop: 'var(--spacing-2)' }}>{hint}</p>
         )}
       </div>
     );

@@ -7,7 +7,7 @@ export default function HomePage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/board');
+    router.replace('/tools');
   }, [router]);
 
   return (

@@ -85,17 +85,20 @@ select {
   background-color: var(--figjam-bg);
 }
 
+/* Borda via box-shadow para evitar radius “cortando” o border nos cantos */
 .react-flow__minimap {
   background: var(--neutral-100);
-  border: 1px solid var(--neutral-300);
+  border: none;
   border-radius: var(--radius-lg);
+  box-shadow: inset 0 0 0 1px var(--neutral-400), var(--shadow-md);
 }
 
+/* Sem border-radius apenas neste componente (controles + - fullscreen lock) */
 .react-flow__controls {
   background: var(--neutral-100);
-  border: 1px solid var(--neutral-300);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-md);
+  border: none;
+  border-radius: 0;
+  box-shadow: inset 0 0 0 1px var(--neutral-400), var(--shadow-md);
 }
 
 .react-flow__controls-button {
@@ -121,4 +124,29 @@ select {
 
 .react-flow__edge:hover .react-flow__edge-path {
   stroke: var(--connection-hover);
+}
+
+/* Brain hub: animação wobbly (scale + rotate) */
+.hub-brain-node {
+  animation: hub-glow-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes hub-glow-pulse {
+  0%, 100% { filter: drop-shadow(0 0 12px rgba(255, 217, 120, 0.5)); }
+  50% { filter: drop-shadow(0 0 20px rgba(255, 200, 87, 0.7)); }
+}
+
+/* Arestas hub → cards: traço em movimento (BezierEdge com classe no wrapper) */
+.react-flow__edge.obsidian-graph-edge .react-flow__edge-path {
+  stroke: #D4C49E !important;
+  stroke-width: 2;
+  fill: none;
+  stroke-dasharray: 8 6;
+  animation: obsidian-edge-flow 1.2s linear infinite;
+}
+
+@keyframes obsidian-edge-flow {
+  to {
+    stroke-dashoffset: -14;
+  }
 }

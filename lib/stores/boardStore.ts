@@ -204,7 +204,6 @@ export const useBoardStore = create<BoardState>()(
                 updatedAt: new Date(),
               };
             }
-            // Atualizar o card (remover parentId)
             if (card.id === cardId) {
               return {
                 ...card,
@@ -215,6 +214,22 @@ export const useBoardStore = create<BoardState>()(
             return card;
           }),
         }));
+      },
+
+      hydrate: (payload) => {
+        const parseCard = (c: Card & { createdAt?: string | Date; updatedAt?: string | Date }): Card => {
+          const base = {
+            ...c,
+            createdAt: typeof c.createdAt === 'string' ? new Date(c.createdAt) : c.createdAt,
+            updatedAt: typeof c.updatedAt === 'string' ? new Date(c.updatedAt) : c.updatedAt,
+          };
+          return base as Card;
+        };
+        set({
+          cards: payload.cards.map(parseCard),
+          viewport: payload.viewport,
+          cloudEnabled: payload.cloudEnabled,
+        });
       },
     }),
     {

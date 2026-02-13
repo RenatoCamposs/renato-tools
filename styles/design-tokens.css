@@ -178,7 +178,7 @@
 
   /* FigJam-style background */
   --figjam-bg: #fafaf9;
-  --figjam-dot-color: #e5e5e0;
+  --figjam-dot-color: #D4C078;  /* Amarelo suave visível */
   
   /* Card Colors */
   --card-cream: var(--primary-100);

@@ -12,15 +12,16 @@ import { Background, useViewport, BackgroundVariant } from '@xyflow/react';
 const BASE_GAP = 24;
 const MIN_GAP = 8;
 const MAX_GAP = 64;
+const BASE_SIZE = 1.5;
+const MIN_SIZE = 1;
+const MAX_SIZE = 2.5;
 
 export function FigJamBackground() {
   const { zoom } = useViewport();
 
   const { gap, size } = useMemo(() => {
-    // Ao dar zoom in (zoom > 1): gap menor = mais pontos na tela
-    // Ao dar zoom out (zoom < 1): gap maior = menos pontos
     const gap = Math.max(MIN_GAP, Math.min(MAX_GAP, BASE_GAP / zoom));
-    const size = Math.max(0.5, Math.min(1.5, 1 / zoom));
+    const size = Math.max(MIN_SIZE, Math.min(MAX_SIZE, BASE_SIZE / zoom));
     return { gap, size };
   }, [zoom]);
 
@@ -29,7 +30,7 @@ export function FigJamBackground() {
       variant={BackgroundVariant.Dots}
       gap={gap}
       size={size}
-      color="var(--figjam-dot-color)"
+      color="#D4C078"
     />
   );
 }

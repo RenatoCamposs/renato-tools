@@ -23,19 +23,38 @@ export function FolderCard({ data, selected, onToggleExpand, readOnly = false }:
     }
   };
 
+  // Resting: pasta não selecionada = primary-400; selecionada/expandida = mais escuro. Hover = mesma cor da linha do ícone (primary-300).
+  const folderBorderResting = data.isExpanded ? 'var(--primary-700)' : selected ? 'var(--primary-600)' : 'var(--primary-400)';
+  const folderBorderHover = 'var(--primary-300)';
+  const folderRestShadow = `inset 0 0 0 2px ${folderBorderResting}, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06)`;
+  const folderSelectedShadow = `${folderRestShadow}, var(--shadow-glow)`;
+  const folderHoverShadow = `inset 0 0 0 2px ${folderBorderHover}, 0 4px 6px -1px rgba(0,0,0,0.08), 0 2px 4px -2px rgba(0,0,0,0.06), 0 0 30px rgba(255, 217, 120, 0.6)`;
+  const folderExpandedGlow = '0 0 40px rgba(255, 217, 120, 0.8)';
+
   const folderVariants = {
+    enter: {
+      scale: 0,
+      opacity: 0,
+    },
+    rest: {
+      scale: 1,
+      opacity: 1,
+      y: 0,
+      boxShadow: selected || data.isExpanded ? folderSelectedShadow : folderRestShadow,
+    },
     hover: {
       y: -8,
       scale: 1.05,
-      boxShadow: '0 0 30px rgba(255, 217, 120, 0.6)',
+      boxShadow: folderHoverShadow,
       transition: { duration: 0.2 }
     },
     tap: {
-      scale: 0.95
+      scale: 0.95,
+      boxShadow: selected || data.isExpanded ? folderSelectedShadow : folderRestShadow,
     },
     expanded: {
       scale: 1.05,
-      boxShadow: '0 0 40px rgba(255, 217, 120, 0.8)',
+      boxShadow: `${folderRestShadow}, ${folderExpandedGlow}`,
     }
   };
 
@@ -80,27 +99,29 @@ export function FolderCard({ data, selected, onToggleExpand, readOnly = false }:
       {/* Card Pasta Principal */}
       <motion.div
         className={cn(
-          'relative w-[200px] h-[140px] rounded-xl p-3',
-          'border-2 shadow-md cursor-pointer',
-          'backdrop-blur-sm transition-all duration-200',
-          'flex flex-col overflow-visible',
-          selected 
-            ? 'border-[var(--primary-600)] shadow-glow' 
-            : 'border-[var(--primary-400)]',
-          data.isExpanded && 'border-[var(--primary-700)] opacity-90'
+          'relative flex w-[200px] h-[140px] flex-col overflow-visible rounded-xl backdrop-blur-sm transition-all duration-200 cursor-pointer',
+          data.isExpanded && 'opacity-90'
         )}
         style={{
           background: data.color || 'var(--primary-200)',
           backgroundColor: data.color ? `${data.color}dd` : 'var(--primary-200)',
+          padding: 'var(--spacing-4)',
+          // Borda sempre no style para não sumir no modo edição (painel aberto)
+          boxShadow: selected || data.isExpanded ? folderSelectedShadow : folderRestShadow,
         }}
         variants={folderVariants}
+        initial="enter"
+        animate={data.isExpanded ? 'expanded' : 'rest'}
+        transition={{ type: 'spring', stiffness: 300, damping: 25 }}
         whileHover="hover"
         whileTap="tap"
-        animate={data.isExpanded ? 'expanded' : undefined}
         onClick={handleClick}
       >
         {/* Ícone de Pasta */}
-        <div className="w-16 h-16 mx-auto mb-2 rounded-lg bg-white/50 flex items-center justify-center shadow-sm">
+        <div 
+          className="mx-auto flex h-16 w-16 items-center justify-center rounded-lg bg-white/50 shadow-sm"
+          style={{ marginBottom: 'var(--spacing-3)' }}
+        >
           <motion.div
             animate={{ 
               rotate: data.isExpanded ? [0, -10, 10, 0] : 0 
@@ -117,23 +138,30 @@ export function FolderCard({ data, selected, onToggleExpand, readOnly = false }:
 
         {/* Conteúdo */}
         <div className="flex-1 text-center">
-          <h3 className="text-sm font-semibold text-[var(--neutral-800)] mb-1 truncate">
+          <h3 
+            className="truncate text-sm font-semibold text-[var(--neutral-800)]"
+            style={{ marginBottom: 'var(--spacing-1)' }}
+          >
             {data.title}
           </h3>
-          <p className="text-xs text-[var(--neutral-600)] line-clamp-2">
+          <p className="line-clamp-2 text-xs text-[var(--neutral-600)]">
             {data.description}
           </p>
         </div>
 
         {/* Badge contador */}
-        <div className="absolute top-2 left-2 bg-[var(--primary-600)] text-white rounded-full w-7 h-7 flex items-center justify-center text-xs font-bold shadow-md">
+        <div 
+          className="absolute flex h-8 w-8 items-center justify-center rounded-full bg-[var(--primary-600)] text-xs font-bold text-white shadow-md"
+          style={{ top: 'var(--spacing-3)', left: 'var(--spacing-3)' }}
+        >
           {data.children.length}
         </div>
 
         {/* Botão Delete - só quando autenticado */}
         {!readOnly && (
           <motion.button
-            className="absolute top-2 right-2 w-6 h-6 rounded-full bg-[var(--accent-coral)] flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity z-10"
+            className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-coral)] opacity-0 transition-opacity hover:opacity-100"
+            style={{ top: 'var(--spacing-3)', right: 'var(--spacing-3)' }}
             onClick={handleDelete}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}

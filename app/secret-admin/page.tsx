@@ -28,7 +28,7 @@ export default function SecretAdminPage() {
                   card: 'shadow-2xl rounded-2xl',
                 },
               }}
-              afterSignInUrl="/board"
+              afterSignInUrl="/tools"
             />
           </div>
         </SignedOut>
@@ -42,7 +42,7 @@ export default function SecretAdminPage() {
               Você está logado como administrador.
             </p>
             <Link 
-              href="/board"
+              href="/tools"
               className="inline-block bg-[var(--primary-500)] text-[var(--neutral-900)] px-6 py-3 rounded-lg font-semibold hover:bg-[var(--primary-600)] transition-colors"
             >
               Ir para o Board →
