@@ -54,7 +54,7 @@ async function loadStateFromFile(): Promise<void> {
     const raw = await readFile(filePath, 'utf-8');
     const data = JSON.parse(raw) as StoredState;
     if (Array.isArray(data.cards)) {
-      globalState.cards = data.cards.map((c) => parseCard(c as Record<string, unknown>));
+      globalState.cards = data.cards.map((c) => parseCard(c as unknown as Record<string, unknown>));
     }
     if (data.viewport && typeof data.viewport.x === 'number' && typeof data.viewport.y === 'number' && typeof data.viewport.zoom === 'number') {
       globalState.viewport = data.viewport;
