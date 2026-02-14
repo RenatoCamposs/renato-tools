@@ -40,9 +40,9 @@ function serializeCard(card: Card & { createdAt?: Date | string; updatedAt?: Dat
 }
 
 function parseCard(card: Record<string, unknown>): Card {
-  const c = { ...card } as unknown as Card & { createdAt?: string; updatedAt?: string };
-  if (typeof c.createdAt === 'string') c.createdAt = new Date(c.createdAt) as unknown as Date;
-  if (typeof c.updatedAt === 'string') c.updatedAt = new Date(c.updatedAt) as unknown as Date;
+  const c = { ...card } as unknown as Card & { createdAt?: string | Date; updatedAt?: string | Date };
+  if (typeof c.createdAt === 'string') c.createdAt = new Date(c.createdAt);
+  if (typeof c.updatedAt === 'string') c.updatedAt = new Date(c.updatedAt);
   return c as Card;
 }
 
