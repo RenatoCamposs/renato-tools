@@ -4,17 +4,20 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Handle, Position } from '@xyflow/react';
 import { Trash2, Link as LinkIcon } from 'lucide-react';
-import Image from 'next/image';
 import { cn } from '@/lib/utils/cn';
 import type { ContentCardProps } from '@/lib/types';
 import { useBoardStore } from '@/lib/stores/boardStore';
 
-export function ContentCard({ data, selected, isChild = false, readOnly = false }: ContentCardProps) {
+export function ContentCard({ data, selected, isChild = false, isExiting = false, readOnly = false }: ContentCardProps) {
   const deleteCard = useBoardStore((state) => state.deleteCard);
   const selectCard = useBoardStore((state) => state.selectCard);
 
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation();
+    if (readOnly && data.url) {
+      window.open(data.url, '_blank', 'noopener,noreferrer');
+      return;
+    }
     if (!readOnly) selectCard(data.id, e.ctrlKey || e.metaKey);
   };
 
@@ -52,98 +55,113 @@ export function ContentCard({ data, selected, isChild = false, readOnly = false 
     tap: {
       scale: 0.98,
       boxShadow: selected ? shadowSelected : shadowRest,
-    }
+    },
+    exit: {
+      scale: 0,
+      opacity: 0,
+      transition: { duration: 0.25, ease: 'easeIn' },
+    },
   };
 
   const isEmoji = /\p{Emoji}/u.test(data.image);
   const isUrl = data.image.startsWith('http');
+  const isBookmark = isUrl && data.url;
 
   return (
     <motion.div
       className={cn(
-        'relative flex w-[200px] h-[140px] flex-col overflow-hidden rounded-xl backdrop-blur-sm transition-all duration-200 cursor-pointer group',
-        isChild && 'opacity-95'
+        'relative flex min-w-[200px] w-fit min-h-[100px] flex-col overflow-hidden rounded-xl backdrop-blur-sm transition-all duration-200 cursor-pointer group',
+        isChild && 'opacity-95',
+        readOnly && data.url && 'cursor-pointer'
       )}
       style={{
         background: data.color || 'var(--card-cream)',
         backgroundColor: data.color ? `${data.color}dd` : 'var(--card-cream)',
         padding: 'var(--spacing-4)',
-        // Borda sempre no style para não sumir no modo edição (painel aberto)
         boxShadow: selected ? shadowSelected : shadowRest,
       }}
       variants={cardVariants}
       initial="enter"
-      animate="rest"
-      transition={{ type: 'spring', stiffness: 300, damping: 25 }}
-      whileHover="hover"
-      whileTap="tap"
+      animate={isExiting ? 'exit' : 'rest'}
+      transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+      whileHover={isExiting ? undefined : 'hover'}
+      whileTap={isExiting ? undefined : 'tap'}
       onClick={handleClick}
     >
-      {/* Handles para conexões - só quando pode editar */}
       {!readOnly && (
         <>
-          <Handle 
-            type="source" 
-            position={Position.Right} 
-            className="!w-2 !h-2 !bg-[var(--primary-500)] !border-2 !border-white opacity-0 hover:opacity-100 transition-opacity"
-          />
-          <Handle 
-            type="target" 
-            position={Position.Left} 
-            className="!w-2 !h-2 !bg-[var(--primary-500)] !border-2 !border-white opacity-0 hover:opacity-100 transition-opacity"
-          />
+          <Handle type="source" position={Position.Right} id="source" className="!w-2 !h-2 !bg-[var(--primary-500)] !border-2 !border-white opacity-0 hover:opacity-100 transition-opacity" />
+          <Handle type="target" position={Position.Left} id="target" className="!w-2 !h-2 !bg-[var(--primary-500)] !border-2 !border-white opacity-0 hover:opacity-100 transition-opacity" />
         </>
       )}
 
-      {/* Grupo imagem + texto alinhados horizontalmente */}
-      <div 
-        className="flex flex-1 min-h-0 items-center"
-        style={{ gap: 'var(--spacing-3)' }}
-      >
-        <div 
-          className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/50 shadow-sm"
-        >
-          {isEmoji ? (
-            <div className="text-2xl">{data.image}</div>
-          ) : isUrl ? (
-            <Image 
-              src={data.image} 
-              alt={data.title}
-              width={48}
-              height={48}
+      {/* Bookmark: área de texto maior (imagem 48px), descrição 2 linhas, link até o fim */}
+      {isBookmark ? (
+        <div className="flex min-w-0 flex-1" style={{ gap: 'var(--spacing-3)' }}>
+          <div className="min-w-[140px] max-w-[240px] flex-1 flex flex-col justify-center text-left overflow-hidden" style={{ gap: 'var(--spacing-2)' }}>
+            <h3 className="min-w-0 truncate text-sm font-semibold text-[var(--neutral-800)] leading-tight">
+              {data.title}
+            </h3>
+            {data.description ? (
+              <p className="line-clamp-2 text-xs leading-tight text-[var(--neutral-600)] break-words min-w-0">
+                {data.description}
+              </p>
+            ) : null}
+            {data.url && (
+              <p
+                className="min-w-0 w-full max-w-full truncate text-[10px] leading-tight text-[var(--primary-600)] whitespace-nowrap"
+                style={{ marginTop: 'var(--spacing-2)' }}
+                title={data.url}
+              >
+                {data.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+              </p>
+            )}
+          </div>
+          <div className="h-[48px] w-[48px] shrink-0 rounded-lg overflow-hidden bg-white/30 shadow-sm">
+            <img
+              src={data.image}
+              alt=""
               className="h-full w-full object-cover"
+              referrerPolicy="no-referrer"
+              sizes="48px"
             />
-          ) : (
-            <div className="text-2xl">{data.image}</div>
-          )}
+          </div>
         </div>
-        <div className="min-w-0 flex-1 overflow-hidden text-left">
-          <h3 
-            className="truncate text-sm font-semibold text-[var(--neutral-800)]"
-            style={{ marginBottom: 'var(--spacing-1)' }}
-          >
-            {data.title}
-          </h3>
-          <p className="line-clamp-2 text-xs leading-tight text-[var(--neutral-600)]">
-            {data.description}
-          </p>
+      ) : (
+        <div className="flex items-center shrink-0" style={{ gap: 'var(--spacing-3)' }}>
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white/50 shadow-sm">
+            {isEmoji ? (
+              <div className="text-2xl">{data.image}</div>
+            ) : isUrl ? (
+              <img
+                src={data.image}
+                alt={data.title}
+                className="h-full w-full object-cover rounded-lg"
+                referrerPolicy="no-referrer"
+                sizes="48px"
+              />
+            ) : (
+              <div className="text-2xl">{data.image}</div>
+            )}
+          </div>
+          <div className="min-w-0 flex-1 overflow-hidden text-left">
+            <h3 className="truncate text-sm font-semibold text-[var(--neutral-800)]" style={{ marginBottom: 'var(--spacing-2)' }}>
+              {data.title}
+            </h3>
+            <p className="line-clamp-2 text-xs leading-tight text-[var(--neutral-600)]">
+              {data.description}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Tags (chips) */}
       {data.tags && data.tags.length > 0 && (
-        <div 
-          className="flex flex-wrap"
-          style={{ marginTop: 'var(--spacing-4)', gap: 'var(--spacing-2)' }}
-        >
+        <div className="flex flex-wrap" style={{ marginTop: 'var(--spacing-4)', gap: 'var(--spacing-2)' }}>
           {data.tags.slice(0, 2).map(tag => (
-            <span 
-              key={tag} 
+            <span
+              key={tag}
               className="rounded-full bg-[var(--primary-200)] font-medium text-[var(--primary-800)]"
-              style={{ 
-                padding: 'var(--spacing-1) var(--spacing-2)',
-                fontSize: 'var(--text-xs)',
-              }}
+              style={{ padding: 'var(--spacing-1) var(--spacing-2)', fontSize: 'var(--text-xs)' }}
             >
               {tag}
             </span>
@@ -151,25 +169,23 @@ export function ContentCard({ data, selected, isChild = false, readOnly = false 
         </div>
       )}
 
-      {/* Botão Delete - só quando autenticado */}
       {!readOnly && (
         <motion.button
-          className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-coral)] opacity-0 transition-opacity hover:opacity-100 group-hover:opacity-100"
+          className="absolute z-10 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent-coral)] opacity-0 hover:opacity-100 group-hover:opacity-100"
           style={{ top: 'var(--spacing-3)', right: 'var(--spacing-3)' }}
           onClick={handleDelete}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.9 }}
         >
-          <Trash2 size={12} className="text-[var(--neutral-900)]" />
+          <Trash2 size={11} className="text-[var(--neutral-900)]" />
         </motion.button>
       )}
 
-      {/* Badge de conexões */}
       {data.links && data.links.length > 0 && (
-        <div 
+        <div
           className="absolute flex items-center rounded-full bg-[var(--primary-500)] font-bold text-[var(--neutral-900)] shadow-sm"
-          style={{ 
-            bottom: 'var(--spacing-3)', 
+          style={{
+            bottom: 'var(--spacing-3)',
             right: 'var(--spacing-3)',
             padding: 'var(--spacing-1) var(--spacing-2)',
             gap: 'var(--spacing-1)',

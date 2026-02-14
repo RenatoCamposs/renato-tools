@@ -17,8 +17,10 @@ export const useBoardStore = create<BoardState>()(
       
       cards: [],
       selectedCards: [],
+      exitingCardIds: [],
       viewport: DEFAULT_VIEWPORT,
       cloudEnabled: true,
+      hasBeenHydrated: false,
 
       // ============================================
       // CARD ACTIONS
@@ -46,6 +48,7 @@ export const useBoardStore = create<BoardState>()(
               ...baseCard,
               type: 'folder' as const,
               children: [],
+              links: (cardData as Partial<FolderCard>).links || [],
               isExpanded: false,
               layoutStyle: 'circle' as const,
             } as FolderCard
@@ -54,6 +57,7 @@ export const useBoardStore = create<BoardState>()(
               type: 'content' as const,
               tags: (cardData as Partial<ContentCard>).tags || [],
               links: (cardData as Partial<ContentCard>).links || [],
+              url: (cardData as Partial<ContentCard>).url,
             } as ContentCard;
 
         set((state) => ({ cards: [...state.cards, newCard] }));
@@ -103,7 +107,11 @@ export const useBoardStore = create<BoardState>()(
       deleteSelectedCards: () => {
         const { selectedCards, deleteCard } = get();
         selectedCards.forEach((id) => deleteCard(id));
-        set({ selectedCards: [] });
+        set({ selectedCards: [], exitingCardIds: [] });
+      },
+
+      setExitingCards: (ids) => {
+        set({ exitingCardIds: ids });
       },
 
       // ============================================
@@ -229,12 +237,16 @@ export const useBoardStore = create<BoardState>()(
           cards: payload.cards.map(parseCard),
           viewport: payload.viewport,
           cloudEnabled: payload.cloudEnabled,
+          hasBeenHydrated: true,
         });
       },
     }),
     {
       name: 'infinite-board-storage',
-      version: 1,
+      version: 3,
+      // Autosave desabilitado: nada é persistido automaticamente. Salvar serve apenas para
+      // criação/edição de cards e pastas (botão Salvar envia para a API).
+      partialize: () => ({}),
     }
   )
 );

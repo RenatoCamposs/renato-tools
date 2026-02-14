@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Plus, Folder, Trash2, Maximize2, Cloud, CloudOff, Save } from 'lucide-react';
+import { Plus, Folder, Bookmark, Trash2, Maximize2, Cloud, CloudOff, Save, Download, Upload } from 'lucide-react';
 import { Tooltip } from '@/components/design-system/Tooltip';
 import { cn } from '@/lib/utils/cn';
 import type { ToolbarProps } from '@/lib/types';
@@ -9,10 +9,13 @@ import type { ToolbarProps } from '@/lib/types';
 export function Toolbar({
   onCreateCard,
   onCreateFolder,
+  onCreateBookmark,
   onDeleteSelected,
   onResetView,
   onToggleCloud,
   onSave,
+  onExportPositions,
+  onImportPositions,
   hasSelection,
   cloudEnabled,
   canEdit = false,
@@ -57,6 +60,20 @@ export function Toolbar({
                 <Folder size={20} />
               </motion.button>
             </Tooltip>
+
+            {onCreateBookmark && (
+              <Tooltip content="Adicionar Bookmark (preview da URL)">
+                <motion.button
+                  onClick={onCreateBookmark}
+                  className="rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
+                  style={{ padding: 'var(--spacing-2)', minWidth: 40, minHeight: 40 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Bookmark size={20} />
+                </motion.button>
+              </Tooltip>
+            )}
 
             <div 
               className="bg-[var(--neutral-300)]" 
@@ -116,6 +133,38 @@ export function Toolbar({
             {cloudEnabled ? <Cloud size={20} /> : <CloudOff size={20} />}
           </motion.button>
         </Tooltip>
+
+        {canEdit && (onExportPositions != null || onImportPositions != null) && (
+          <>
+            <div className="bg-[var(--neutral-300)]" style={{ width: 1, height: 24, flexShrink: 0 }} />
+            {onExportPositions && (
+              <Tooltip content="Exportar posições (JSON)">
+                <motion.button
+                  onClick={onExportPositions}
+                  className="rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
+                  style={{ padding: 'var(--spacing-2)', minWidth: 40, minHeight: 40 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Download size={20} />
+                </motion.button>
+              </Tooltip>
+            )}
+            {onImportPositions && (
+              <Tooltip content="Importar posições (JSON)">
+                <motion.button
+                  onClick={onImportPositions}
+                  className="rounded-lg hover:bg-[var(--primary-100)] text-[var(--neutral-700)] hover:text-[var(--primary-800)] transition-colors"
+                  style={{ padding: 'var(--spacing-2)', minWidth: 40, minHeight: 40 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                >
+                  <Upload size={20} />
+                </motion.button>
+              </Tooltip>
+            )}
+          </>
+        )}
 
         {canEdit && onSave && (
           <>

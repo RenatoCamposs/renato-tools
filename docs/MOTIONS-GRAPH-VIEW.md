@@ -63,13 +63,21 @@ Estrutura de animações e comportamentos inspirada em GraphView (Obsidian, D3, 
 
 ## Implementação atual
 
-| Motion                    | Onde está / como |
-|---------------------------|-------------------|
-| Órbita ao redor do brain  | `getOrbitalPosition`, layout no Canvas e ao criar card |
-| Linhas hub→cards          | Arestas tipo `obsidian` (BezierEdge) + CSS animado |
-| Hover nos cards           | `whileHover` (scale, glow, borda primary-300) |
-| Enter nó                  | Animação de escala nos node wrappers (pop-in) |
-| Drag e persistência        | `onNodeDragStop` + `updateCard` |
-| Expandir pasta            | FolderCard burst + `toggleFolder` |
+| Motion                    | Status | Onde está / como |
+|---------------------------|--------|-------------------|
+| Órbita ao redor do brain  | ✅     | `getOrbitalPosition`, layout no Canvas e ao criar card |
+| Linhas hub→cards          | ✅     | Arestas tipo `obsidian` (BezierEdge) + CSS `obsidian-edge-flow` (stroke-dasharray) |
+| Hover nos cards           | ✅     | `whileHover` (scale 1.05, y: -8, glow, borda primary-300) em ContentCard/FolderCard |
+| Enter nó (pop-in)         | ✅     | Variante `enter` (scale 0, opacity 0) → `rest` (scale 1) com spring nos cards |
+| Drag e persistência       | ✅     | `onNodeDragStop` + `updateCard` no Canvas |
+| Expandir pasta            | ✅     | FolderCard burst (Framer) + `toggleFolder`; linhas SVG pasta→filhos |
+| Hub (brain) animado       | ✅     | HubNode com scale/rotate em loop (motion) |
+| Pan (view draggable)      | ✅     | React Flow com viewport controlado; limite 20% fora do view |
+| Centro do board          | ✅     | Brain no centro (hub em 0,0); cards em órbita; sem fitView para manter centro |
+| Zoom                      | 🔒     | Desativado (minZoom=maxZoom=1) — sem zoom semântico |
+| Física (forças)           | ❌     | Não implementado; só layout orbital fixo (D3-force opcional no doc) |
+| Exit nó (remoção)         | ✅     | `exitingCardIds` + variante `exit` (scale 0, opacity 0); delete com delay 380ms |
+| Hover: vizinhança/fade    | ❌     | Sem destaque de vizinhança nem fade de nós desconectados |
+| Mudança de layout         | ❌     | Sem alternância força ↔ orbital |
 
-Bibliotecas: React Flow (nós, arestas, zoom, pan), Framer Motion (hover, enter, burst), CSS (animação de traço nas arestas).
+Bibliotecas: React Flow (nós, arestas, pan), Framer Motion (hover, enter, burst, hub), CSS (animação de traço nas arestas).

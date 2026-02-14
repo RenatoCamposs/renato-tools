@@ -33,11 +33,14 @@ export interface ContentCard extends BaseCard {
   type: 'content';
   tags?: string[];
   links?: string[]; // IDs de cards conectados
+  /** URL do link (bookmark); em view-only, clique abre em nova aba */
+  url?: string;
 }
 
 export interface FolderCard extends BaseCard {
   type: 'folder';
   children: string[]; // IDs dos cards filhos
+  links?: string[]; // IDs de cards conectados (pastas ou itens)
   isExpanded: boolean;
   layoutStyle: 'circle' | 'grid' | 'burst';
 }
@@ -70,14 +73,19 @@ export interface Board {
 export interface BoardState {
   cards: Card[];
   selectedCards: string[];
+  /** IDs em animação de saída (exit) antes de remover do store */
+  exitingCardIds: string[];
   viewport: Viewport;
   cloudEnabled: boolean;
-  
+  /** true após hydrate (API); evita sobrescrever posições com layout orbital ao carregar */
+  hasBeenHydrated: boolean;
+
   // Actions
   addCard: (card: Partial<Card>) => void;
   updateCard: (id: string, updates: Partial<Card>) => void;
   deleteCard: (id: string) => void;
   deleteSelectedCards: () => void;
+  setExitingCards: (ids: string[]) => void;
   selectCard: (id: string, multi?: boolean) => void;
   clearSelection: () => void;
   setViewport: (viewport: Partial<Viewport>) => void;
@@ -97,6 +105,7 @@ export interface ContentCardProps {
   data: ContentCard;
   selected: boolean;
   isChild?: boolean;
+  isExiting?: boolean;
   readOnly?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -106,6 +115,7 @@ export interface FolderCardProps {
   data: FolderCard;
   selected: boolean;
   onToggleExpand: (id: string) => void;
+  isExiting?: boolean;
   readOnly?: boolean;
   onEdit?: () => void;
   onDelete?: () => void;
@@ -119,10 +129,15 @@ export interface CanvasProps {
 export interface ToolbarProps {
   onCreateCard: () => void;
   onCreateFolder: () => void;
+  onCreateBookmark?: () => void;
   onDeleteSelected: () => void;
   onResetView: () => void;
   onToggleCloud: () => void;
   onSave?: () => void | Promise<void>; // Salvar estado global (visível para todos)
+  /** Exportar posições dos cards (modo edit, apenas admin) */
+  onExportPositions?: () => void;
+  /** Abre seletor de arquivo para importar posições (modo edit, apenas admin) */
+  onImportPositions?: () => void;
   hasSelection: boolean;
   cloudEnabled: boolean;
   canEdit?: boolean;
