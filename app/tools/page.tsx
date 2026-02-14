@@ -254,7 +254,7 @@ export default function ToolsPage() {
     }
   }, [selectedCards, deleteSelectedCards, setExitingCards]);
 
-  const handleResetView = useCallback(() => {});
+  const handleResetView = useCallback(() => {}, []);
 
   const handleExportPositions = useCallback(() => {
     const payload = { cards, viewport, exportedAt: new Date().toISOString() };
